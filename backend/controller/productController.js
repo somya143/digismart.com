@@ -11,8 +11,66 @@ exports.createProduct = catchAsyncErrors(async (req,res,next) => {
 
 // get all product
 exports.getAllProducts = catchAsyncErrors( async (req,res,next) => {
-  const product = await productModel.find()
-  res.status(200).json({success: true, product});
+  const {limit,page,category,q,sort,arr,off,offSet,firstletter} = req.query
+  if(category && q){
+    let temp = new RegExp(q,"i")
+  let product = await productModel.find({
+    category : category,
+    name: temp
+  }).limit(limit)
+  return res.send(product)
+}
+ else if(category && sort){
+  if(sort === "asc"){
+    let temp = await productModel.find({category:category}).sort({price:1}).limit(limit)
+    return res.send(temp);
+  }else if(sort === "desc"){
+    let temp = await productModel.find({category:category}).sort({price:-1}).limit(limit)
+    return res.send(temp)
+  }
+ }
+ else if(category && firstletter){
+  let temp = firstletter;
+  let product = await productModel.find({category:category,name:{$regex: "^"+ temp, $options:"i"}}).limit(limit)
+  return res.send(product);
+ } 
+ else if(category && arr){
+  const [min,max]= arr.split(",").map(Number);
+  let temp = await productModel.find({
+    category:category,
+    $and : [{price: {$gte:min}},{price: {$lte:max}}]
+  }).limit(limit).sort({price:1});
+  return res.send(temp)
+ }
+ else if(category && off){
+  const [min,max] = off.split(",").map(Number);
+  let temp = await productModel.find({
+    category: category,
+    $and:[{off:{$gte:min}},{off:{$lte:max}}]
+  }).sort({off:1}).limit(limit)
+  return res.send(temp);
+ }
+ else if(category && offSet){
+  if(offSet === "asc"){
+    let temp = await productModel.find({category:category}).sort({off:1}).limit(limit);
+    return res.send(temp)
+  }else if(offSet === "desc"){
+    let temp = await productModel.find({category:category}).sort({off:-1}).limit(limit);
+    return res.send(temp);
+  }
+
+ }
+ else if(category){
+  let temp = await productModel.find({category:category}).skip((page-1) *limit).limit(21);
+  return res.send(temp)
+ }
+ else if(input){
+  let temp = new RegExp(input,"i");
+  let product = await productModel.find({name:temp}).skip((page-1)*limit).limit(21);
+  return res.send(product);
+ }
+ let product = await productModel.find().skip((page-1)*limit).limit(limit);
+ return res.send(product);
 });
 
 // get single product by id

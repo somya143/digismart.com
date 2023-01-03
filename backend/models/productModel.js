@@ -6,6 +6,7 @@ const productSchema = new mongoose.Schema({
     price: {type: Number, required:[true, "Please enter the product price"],
             maxLength : [8 , "Price cannot exceed 8 digit"] },
     rating: {type: Number, default:0},
+    off: {type:Number},
     images: [{
         public_id:{
           type: String,
