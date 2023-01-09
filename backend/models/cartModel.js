@@ -15,6 +15,10 @@ const cartSchema = new mongoose.Schema({
         type:Number,
         required: true,
         min:1
+    },
+    delivered:{
+        required:true,
+        type: Boolean
     }
 },
 {
