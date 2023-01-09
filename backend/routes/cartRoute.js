@@ -4,7 +4,7 @@ const { getAllCartProducts, createCartProducts, getSingleCartItem, updateCartIte
 const app = express.Router();
 
 app.route("/").get(getAllCartProducts);
-app.route("/:id").get(getSingleCartItem)
+app.route("/:id").get(getSingleCartItem);
 app.route("/").post(createCartProducts);
 app.route("/:id").patch(updateCartItem);
 app.route("/:id").delete(removeItemFromCart);

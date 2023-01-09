@@ -2,9 +2,9 @@ const cartModel = require("./../models/cartModel");
 const authMiddleware = require("./../middleware/authMiddleware");
 const productModel = require("./../models/productModel");
 
-exports.getAllCartProducts = authMiddleware, async (req,res,next) => {
+exports.getAllCartProducts =  async (req,res,next) => {
     try {
-        let cart = await cartModel.find({user: req.userId}).populate([
+        let cart = await cartModel.find().populate([
             {
                 path: "user",
                 select: ["name","email","userImage","address","role","pincode"]
@@ -17,7 +17,7 @@ exports.getAllCartProducts = authMiddleware, async (req,res,next) => {
     }
 };
 
-exports.getSingleCartItem = authMiddleware , async(req,res,next) => {
+exports.getSingleCartItem =  async(req,res,next) => {
     if(req.id !== req.params.id){
         return res.status(401).send(`User with this id doesn't exist`);
     }
@@ -30,9 +30,9 @@ exports.getSingleCartItem = authMiddleware , async(req,res,next) => {
 }
 
 exports.createCartProducts = async (req,res,next) => {
-    let {products , user , quantity, delivered} = req.body;
+    let {product , user , quantity, delivered} = req.body;
     try {
-        let cart = await cartModel.create({products,user,quantity,delivered});
+        let cart = await cartModel.create({product,user,quantity,delivered});
         if(!cart){
             return res.send("cart is missing");
         }else{
